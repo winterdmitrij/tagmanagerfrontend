@@ -1,0 +1,161 @@
+<div class="container-fluid" *ngIf="instance">
+  <h1 class="text-center">Instance Details</h1>
+  <h2>Instance: {{instance.site}}</h2>
+  <h3>IP-Address: {{instance.ipAddress}}</h3>
+  <div class="d-grid gap-2 d-md-block">
+    <button (click)="onOpenModal2(instance, 'add')" type="button" class="btn btn-primary" data-bs-toggle="modal">
+      Add Tag Groups
+    </button>
+    <button (click)="onOpenModal2(instance, 'fromCMK')" type="button" class="btn btn-primary" data-bs-toggle="modal">
+      Download from Checkmk
+    </button>
+    <button (click)="onOpenModal2(instance, 'toCMK')" type="button" class="btn btn-primary" data-bs-toggle="modal">
+      Upload to Checkmk
+    </button>
+  </div>
+
+    <div *ngIf="instance && instance?.tagGroups?.length != 0" id="main-container">
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="main-box no-header clearfix">
+              <div class="main-box-body clearfix">
+                <div class="table-responsive well">
+                  <table class="table table-hover table-scroll">
+                    <thead class="bg-primary text-white">
+                      <tr>
+                        <th><span>Tag Group Id</span></th>
+                        <th><span>Tag Group Title</span></th>
+                        <th><span>Topic</span></th>
+                        <th><span>Demonstration</span></th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let tagGroup of instance.tagGroups">
+                        <td>
+                          <span>{{tagGroup?.tagGroupId}}</span>
+                        </td>
+                        <td>
+                          <span>{{tagGroup?.tagGroupTitle}}</span>
+                        </td>
+                        <td>
+                          <span>{{tagGroup?.topic}}</span>
+                        </td>
+                        <td>
+                          <select class="form-control">
+                            <option *ngFor="let tag of tagGroup.tags" [value]="tag.tagId">{{ tag.tagId }}</option>
+                          </select>
+                        </td>
+    
+                        <!-- Schaltern: Edit, Delete -->
+                        <td style="width: 20%;">
+                          <!-- Papierkorb -->
+                          <a (click)="onOpenModal(tagGroup, 'delete')" class="table-link danger">
+                            <span class="fa-stack">
+                              <i class="fa fa-square fa-stack-2x"></i>
+                              <i class="fa fa-trash-o fa-stack-1x fa-inverse"></i>
+                            </span>
+                          </a>
+                        </td>
+                      </tr>    
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+
+  <!-- Delete Tag Group Modal -->
+  <div class="modal fade" id="delTagGroupModal" tabindex="-1" role="dialog" aria-labelledby="delTagGroupModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="delTagGroupModalLabel">Delete Tag Group</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Are you sure you want to delete Tag Group {{deleteTagGroup?.tagGroupId}}</p>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                <button (click)="onDelTagGroup(instance?.site, deleteTagGroup?.tagGroupId)" class="btn btn-danger" data-dismiss="modal">Yes</button>
+            </div>
+          </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Tag Groups Modal -->
+  <div class="modal fade" id="addTagGroupsModal" tabindex="-1" role="dialog" aria-labelledby="addTagGroupsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addTagGroupsModalLabel">Add Tag Groups to Instance: {{instance?.site}}</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <!--NgForm-->
+          <form #addForm="ngForm" (ngSubmit)="onAddTagGroups(instance?.site)">
+            <app-add-taggroups-list></app-add-taggroups-list>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- From Checkmk -->
+  <div class="modal fade" id="fromCheckmkModal" tabindex="-1" role="dialog" aria-labelledby="fromCheckmkModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="fromCheckmkModalLabel">Download Tag Groups from Checkmk</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Are you sure you want to download the tag groups from Checkmk?</p>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                <button (click)="onFromCheckmk(instance?.site)" class="btn btn-danger" data-dismiss="modal">Yes</button>
+            </div>
+          </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- To Checkmk -->
+  <div class="modal fade" id="toCheckmkModal" tabindex="-1" role="dialog" aria-labelledby="toCheckmkModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="toCheckmkModalLabel">Upload Tag Groups to Checkmk</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Do you really want to upload the tag groups to Checkmk?</p>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                <button (click)="onToCheckmk(instance)" class="btn btn-danger" data-dismiss="modal">Yes</button>
+            </div>
+          </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Keinen Tag Groups gefunden -->
+<div *ngIf="instance && instance?.tagGroups?.length == 0" class="col-lg-12 col-md-12 col-xl-12">
+  <div class="alert alert-info" role="alert">
+    <h4 class="alert-heading">NO TAG GROUPS!</h4>
+    <p>No Tag Groups were found.</p>
+  </div>
+</div>

@@ -1,0 +1,10 @@
+.well {
+    background: none;
+    height: 750px;
+}
+
+.table-scroll tbody {
+    position: absolute;
+    overflow-y: scroll;
+    height: 690px;
+}

@@ -1,0 +1,150 @@
+<div class="container" *ngIf="tagGroup" id="main-container">
+  <h1 class="text-center">Tag Group Detail</h1>
+  <!--<h1>Id: {{tagGroup.tagGroupId}}</h1>-->
+  <h2>Title: {{tagGroup.tagGroupTitle}}</h2>
+  <h3>Topic: {{tagGroup.topic}}</h3>
+  <h5>Help: {{tagGroup.help}}</h5>
+  <button (click)="onOpenModal2('add')" type="button" class="btn btn-primary" data-bs-toggle="modal"><!-- -->
+    Add New Tag
+  </button>
+
+    <div *ngIf="tagGroup && tagGroup.tags?.length != 0">
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="main-box no-header clearfix">
+              <div class="main-box-body clearfix">
+                <div class="table-responsive well">
+                  <table class="table table-hover table-scroll">
+                    <thead class="bg-primary text-white">
+                      <tr>
+                        <th><span>Id</span></th>
+                        <th><span>Title</span></th>
+                        <th><span>Actions</span></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let tag of tagGroup.tags"> 
+                        <td>
+                          <span>{{tag?.tagId}}</span>
+                        </td>
+                        <td>
+                          <span>{{tag?.tagTitle}}</span>
+                        </td>
+    
+                        <!-- Schaltern: Edit, Delete -->
+                        <td style="width: 20%;">
+                          <!-- Bleistift -->
+                          <a (click)="onOpenModal(tag, 'edit')" class="table-link text-info"> <!---->
+                            <span class="fa-stack">
+                              <i class="fa fa-square fa-stack-2x"></i>
+                              <i class="fa fa-pencil fa-stack-1x fa-inverse"></i>
+                            </span>
+                          </a>
+                          <!-- Pappierkorb -->
+                          <a (click)="onOpenModal(tag, 'delete')" class="table-link danger"> <!---->
+                            <span class="fa-stack">
+                              <i class="fa fa-square fa-stack-2x"></i>
+                              <i class="fa fa-trash-o fa-stack-1x fa-inverse"></i>
+                            </span>
+                          </a>
+                        </td>
+                      </tr>    
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+
+  <!-- Add New Tag Modal -->
+  <div class="modal fade" id="addTagModal" tabindex="-1" role="dialog" aria-labelledby="addTagModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addTagModalLabel">Add New Tag</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+          </button>
+          </div>
+          <div class="modal-body">
+          <form #addForm="ngForm" (ngSubmit)="onAddTag(tagGroup.tagGroupId, addForm)">
+              <div class="form-group">
+                  <label for="tagId">Id</label>
+                  <input type="text" ngModel name="tagId" class="form-control" id="tagId" placeholder="Id" required>
+              </div>
+              <div class="form-group">
+                  <label for="tagTitle">Title</label>
+                  <input type="text" ngModel name="tagTitle" class="form-control" id="tagTitle" placeholder="Title">
+              </div>
+              <div class="modal-footer">
+                  <button type="button" id="add-tag-form" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button [disabled]="addForm.invalid" type="submit" class="btn btn-primary">Save changes</button>
+              </div>
+          </form>
+        </div>
+      </div>
+      </div>
+  </div>
+
+  <!-- Delete Tag Modal -->
+  <div class="modal fade" id="delTagModal" tabindex="-1" role="dialog" aria-labelledby="delTagModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="delTagModalLabel">Delete Tag</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Are you sure you want to delete Tag: {{deleteTag?.tagId}}</p>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                <button (click)="onDelTag(tagGroup.tagGroupId, deleteTag?.tagId)" class="btn btn-danger" data-dismiss="modal">Yes</button>
+            </div>
+          </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Tag Modal -->
+  <div class="modal fade" id="updTagModal" tabindex="-1" role="dialog" aria-labelledby="updTagModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="updTagModalLabel">Edit Tag</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form #updForm="ngForm">
+            <div class="form-group">
+              <label for="tagId"></label>
+              <label for="tagId"><h5>Id: {{editTag?.tagId}}</h5></label>
+              <input type="hidden" ngModel="{{editTag?.tagId}}" name="tagId" class="form-control" id="tagId" placeholder="Tag Id">
+            </div>
+            <div class="form-group">
+              <label for="tagTitle">Title</label>
+              <input type="text" ngModel="{{editTag?.tagTitle}}" name="tagTitle" class="form-control" id="tagTitle" placeholder="Tag Title">
+            </div>
+            <div class="modal-footer">
+              <button type="button" id="" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button (click)="onUpdTag(tagGroup.tagGroupId, updForm.value)" data-dismiss="modal" class="btn btn-primary">Save changes</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Keine Tags gefunden -->
+  <div *ngIf="tagGroup && tagGroup.tags?.length == 0" class="col-lg-12 col-md-12 col-xl-12">
+    <div class="alert alert-info" role="alert">
+      <h4 class="alert-heading">NO TAGS!</h4>
+      <p>No Tags were found.</p>
+    </div>
+  </div>
+</div>

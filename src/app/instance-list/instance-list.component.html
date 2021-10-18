@@ -1,0 +1,167 @@
+<!-- Tabelle Instances-->
+<div class="container-fluid">
+  <h1 class="text-center">{{title}}</h1>
+  <button (click)="onOpenModal2('add')" type="button" class="btn btn-primary" data-bs-toggle="modal">
+    Add New Instance
+  </button>
+  <div id="main-container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="main-box no-header clearfix">
+          <div class="main-box-body clearfix">
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead class="bg-primary text-white">
+                  <tr>
+                    <th><span>SITE</span></th>
+                    <th><span>IP-ADDRESS</span></th>
+                    <th><span>SECRET</span></th>
+                    <th><span>Actions</span></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let instance of instances">
+                    <td>
+                      <a [routerLink]="['/instances', instance.site]" class="user-link">{{instance?.site}}</a>
+                    </td>
+                    <td>
+                      <span>{{instance?.ipAddress}}</span>
+                    </td>
+                    <td>
+                      <span>{{instance?.secret}}</span>
+                    </td>
+
+                    <!-- Schaltern: Edit, Delete -->
+                    <td style="width: 20%;">
+                      <!-- Lupe -->
+                      <a [routerLink]="['/instances', instance.site]" class="table-link text-warning">
+                        <span class="fa-stack">
+                          <i class="fa fa-square fa-stack-2x"></i>
+                          <i class="fa fa-search-plus fa-stack-1x fa-inverse"></i>
+                        </span>
+                      </a>
+                      <!-- Bleistift -->
+                      <a (click)="onOpenModal(instance, 'edit')" class="table-link text-info">
+                        <span class="fa-stack">
+                          <i class="fa fa-square fa-stack-2x"></i>
+                          <i class="fa fa-pencil fa-stack-1x fa-inverse"></i>
+                        </span>
+                      </a>
+                      <!-- Mülleimer -->
+                      <a (click)="onOpenModal(instance, 'delete')" class="table-link danger">
+                        <span class="fa-stack">
+                          <i class="fa fa-square fa-stack-2x"></i>
+                          <i class="fa fa-trash-o fa-stack-1x fa-inverse"></i>
+                        </span>
+                      </a>
+                    </td>
+                  </tr>    
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Instance Modal -->
+  <div class="modal fade" id="addInstanceModal" tabindex="-1" role="dialog" aria-labelledby="addInstanceModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addInstanceModalLabel">Add New Instance</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form #addForm="ngForm" (ngSubmit)="onAddInstance(addForm)">
+            <div class="form-group">
+              <label for="site">Site</label>
+              <input type="text" ngModel name="site" class="form-control" id="site" placeholder="Site" required>
+            </div>
+            <div class="form-group">
+              <label for="ipAddress">IP-Address</label>
+              <input type="text" ngModel name="ipAddress" class="form-control" id="ipAddress" placeholder="IP-Address" required>
+            </div>
+            <div class="form-group">
+              <label for="secret">Secret</label>
+              <input type="text" ngModel name="secret" class="form-control" id="secret" placeholder="Secret" required>
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" id="add-instance-form" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button [disabled]="addForm.invalid" type="submit" class="btn btn-primary">Save changes</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Instance Modal -->
+  <div class="modal fade" id="updInstanceModal" tabindex="-1" role="dialog" aria-labelledby="updInstanceModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="updInstanceModalLabel">Edit Instance</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form #updForm="ngForm">
+            <div class="form-group">
+              <label for="site"></label>
+              <label for="site"><h5>Site: {{editInstance?.site}}</h5></label>
+              <input type="hidden" ngModel="{{editInstance?.site}}" name="site" class="form-control" id="site" placeholder="Site">
+            </div>
+            <div class="form-group">
+              <label for="ipAddress">IP-Address</label>
+              <input type="text" ngModel="{{editInstance?.ipAddress}}" name="ipAddress" class="form-control" id="ipAddress" placeholder="IP-Address">
+            </div>
+            <div class="form-group">
+              <label for="secret">Secret</label>
+              <input type="text" ngModel="{{editInstance?.secret}}" name="secret" class="form-control" id="secret" placeholder="Secret">
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" id="" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button (click)="onUpdInstance(updForm.value)" data-dismiss="modal" class="btn btn-primary">Save changes</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Modal -->
+  <div class="modal fade" id="delInstanceModal" tabindex="-1" role="dialog" aria-labelledby="delInstanceModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="delInstanceModalLabel">Delete Instance</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Are you sure you want to delete Instance: {{deleteInstance?.site}}</p>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                <button (click)="onDelInstance(deleteInstance?.site)" class="btn btn-danger" data-dismiss="modal">Yes</button>
+            </div>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Keine Instance gefunden -->
+<div *ngIf="instances?.length == 0" class="col-lg-12 col-md-12 col-xl-12">
+  <div class="alert alert-info" role="alert">
+    <h4 class="alert-heading">NO INSTANCES!</h4>
+    <p>No Instances were found.</p>
+  </div>
+</div>
